@@ -7,9 +7,9 @@ reports/
 #terraform files
 infra/.terraform/
 infra/tfplan
-.terraform.lock.hcl
-terraform.tfstate
-terraform.tfstate.backup
+.terraform/
+*.tfstate
+*.tfstate.*
 
 #ansible files
 ansible/.generated/
