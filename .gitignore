@@ -1,0 +1,12 @@
+#passwords and settings on the machine
+.env
+
+#pipeline output
+reports/
+
+#terraform files
+infra/.terraform/
+infra/tfplan
+
+#ansible files
+ansible/.generated/
