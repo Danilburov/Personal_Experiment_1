@@ -16,14 +16,12 @@ pipeline {
     stage('Terraform init') {
       steps {
         sh 'terraform -chdir="$INFRA_DIR" init -input=false'
-        sh 'terraform -chdir="$INFRA_DIR" plan -destroy -input=false -out=tfplan'
-        sh 'terraform -chdir="$INFRA_DIR" apply -input=false tfplan'
       }
     }
 
     stage('Plan destroy') {
       steps {
-        sh 'terraform -chdir=infra plan -destroy -input=false -out=tfplan'
+        sh 'terraform -chdir="$INFRA_DIR" plan -destroy -input=false -out=tfplan'
       }
     }
 
@@ -35,7 +33,7 @@ pipeline {
 
     stage('Destroy') {
       steps {
-        sh 'terraform -chdir=infra apply -input=false tfplan'
+        sh 'terraform -chdir="$INFRA_DIR" apply -input=false tfplan'
       }
     }
   }
