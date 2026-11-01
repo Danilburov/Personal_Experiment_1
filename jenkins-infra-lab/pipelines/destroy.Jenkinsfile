@@ -9,12 +9,15 @@ pipeline {
 
   environment {
     TF_IN_AUTOMATION = 'true'
+    INFRA_DIR = 'jenkins-infra-lab/infra'
   }
 
   stages {
     stage('Terraform init') {
       steps {
-        sh 'terraform -chdir=infra init -input=false'
+        sh 'terraform -chdir="$INFRA_DIR" init -input=false'
+        sh 'terraform -chdir="$INFRA_DIR" plan -destroy -input=false -out=tfplan'
+        sh 'terraform -chdir="$INFRA_DIR" apply -input=false tfplan'
       }
     }
 
