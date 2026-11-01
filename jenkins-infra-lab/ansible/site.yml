@@ -1,0 +1,42 @@
+- name: Install a single-node k3s cluster
+  hosts: k3s_server
+  become: true
+  gather_facts: false
+
+  vars:
+    k3s_version: v1.35.6+k3s1
+
+  tasks:
+    - name: Wait until the new server accepts SSH
+      ansible.builtin.wait_for_connection:
+        timeout: 300
+
+    - name: Wait for cloud-init to finish first-boot setup
+      ansible.builtin.command: cloud-init status --wait
+      register: cloud_init
+      changed_when: false
+      failed_when: cloud_init.rc not in [0, 2]
+
+    - name: Download the k3s install script
+      ansible.builtin.get_url:
+        url: https://get.k3s.io
+        dest: /usr/local/bin/k3s-install.sh
+        mode: "0755"
+
+    - name: Install k3s (skipped when it is already installed)
+      ansible.builtin.command: /usr/local/bin/k3s-install.sh
+      environment:
+        INSTALL_K3S_VERSION: "{{ k3s_version }}"
+        INSTALL_K3S_EXEC: >-
+          server
+          --node-name {{ inventory_hostname }}
+          --tls-san {{ ansible_host }}
+          --write-kubeconfig-mode 0600
+      args:
+        creates: /usr/local/bin/k3s
+
+    - name: Make sure k3s is running and starts on boot
+      ansible.builtin.systemd:
+        name: k3s
+        state: started
+        enabled: true
