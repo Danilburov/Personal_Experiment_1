@@ -11,5 +11,6 @@ infra/tfplan
 *.tfstate
 *.tfstate.*
 
-#ansible files
+#ansible files, making sure the private key is not exposed
 ansible/.generated/
+.generated/
